@@ -99,6 +99,7 @@ public abstract class RpcServer implements RpcServerInterface, ConfigurationObse
   private final boolean authorize;
   private volatile boolean isOnlineLogProviderEnabled;
   protected boolean isSecurityEnabled;
+  protected final RpcInterceptorManager interceptorManager;
 
   public static final byte CURRENT_VERSION = 0;
 
@@ -317,6 +318,9 @@ public abstract class RpcServer implements RpcServerInterface, ConfigurationObse
     this.isOnlineLogProviderEnabled = getIsOnlineLogProviderEnabled(conf);
     this.scheduler = scheduler;
 
+    // Initialize RPC interceptor manager
+    this.interceptorManager = new RpcInterceptorManager(conf);
+
     initializeCoprocessorHost(getConf());
   }
 
@@ -445,6 +449,18 @@ public abstract class RpcServer implements RpcServerInterface, ConfigurationObse
   public Pair<Message, ExtendedCellScanner> call(RpcCall call, MonitoredRPCHandler status)
     throws IOException {
     try {
+      // Get the requesting user for interception
+      Optional<User> requestUser = call.getRequestUser();
+      
+      // Intercept the request before processing
+      RpcRequestInterceptor.InterceptResult interceptResult = 
+        interceptorManager.interceptRequest(call, requestUser);
+      
+      if (interceptResult == RpcRequestInterceptor.InterceptResult.BLOCK) {
+        throw new DoNotRetryIOException("Request blocked by RPC interceptor for user: " +
+          requestUser.map(User::getShortName).orElse("UNKNOWN"));
+      }
+      
       MethodDescriptor md = call.getMethod();
       Message param = call.getParam();
       status.setRPC(md.getName(), new Object[] { param }, call.getReceiveTime());
@@ -503,6 +519,10 @@ public abstract class RpcServer implements RpcServerInterface, ConfigurationObse
             responseSize, responseBlockSize, fsReadTime, className, tooSlow, tooLarge));
         }
       }
+      
+      // Notify interceptors of successful request completion
+      interceptorManager.afterRequest(call, requestUser, result);
+      
       return new Pair<>(result, controller.cellScanner());
     } catch (Throwable e) {
       // The above callBlockingMethod will always return a SE. Strip the SE wrapper before
@@ -518,6 +538,10 @@ public abstract class RpcServer implements RpcServerInterface, ConfigurationObse
 
       // increment the number of requests that were exceptions.
       metrics.exception(e);
+      
+      // Notify interceptors of request failure
+      Optional<User> requestUser = call.getRequestUser();
+      interceptorManager.onRequestFailure(call, requestUser, e);
 
       if (e instanceof LinkageError) throw new DoNotRetryIOException(e);
       if (e instanceof IOException) throw (IOException) e;
