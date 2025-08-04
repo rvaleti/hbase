@@ -1,0 +1,236 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<configuration>
+  
+  <!-- Hierarchical Resource Manager Configuration -->
+  
+  <property>
+    <name>hbase.resource.hierarchical.enabled</name>
+    <value>true</value>
+    <description>
+      Enable hierarchical resource management for HBase. When enabled, 
+      provides fair scheduling, throttling, and resource allocation.
+    </description>
+  </property>
+  
+  <!-- Scheduler Configuration -->
+  
+  <property>
+    <name>hbase.resource.hierarchical.scheduler.policy</name>
+    <value>FAIR_SHARE</value>
+    <description>
+      Scheduling policy for resource allocation. 
+      Supported values: FAIR_SHARE, FIFO, DRF
+    </description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.scheduler.fair.preemption.enabled</name>
+    <value>true</value>
+    <description>
+      Enable preemption in fair share scheduler. When a pool exceeds 
+      its fair share for longer than the timeout, resources may be 
+      preempted from it.
+    </description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.scheduler.fair.preemption.timeout.ms</name>
+    <value>30000</value>
+    <description>
+      Time in milliseconds after which resources may be preempted from 
+      a pool that has exceeded its fair share.
+    </description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.scheduler.allocation.wait.max.ms</name>
+    <value>60000</value>
+    <description>
+      Maximum time in milliseconds a resource request will wait for allocation.
+    </description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.hierarchical.metrics.update.interval.ms</name>
+    <value>5000</value>
+    <description>
+      Interval in milliseconds at which resource metrics are updated.
+    </description>
+  </property>
+  
+  <!-- Throttling Configuration -->
+  
+  <property>
+    <name>hbase.resource.hierarchical.throttle.enabled</name>
+    <value>true</value>
+    <description>
+      Enable request throttling based on resource utilization and rate limits.
+    </description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.throttle.global.rps.limit</name>
+    <value>10000</value>
+    <description>
+      Global requests per second limit for all users and applications.
+    </description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.throttle.user.rps.limit</name>
+    <value>1000</value>
+    <description>
+      Per-user requests per second limit.
+    </description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.throttle.namespace.rps.limit</name>
+    <value>5000</value>
+    <description>
+      Per-namespace requests per second limit.
+    </description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.throttle.table.rps.limit</name>
+    <value>2000</value>
+    <description>
+      Per-table requests per second limit.
+    </description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.throttle.memory.threshold</name>
+    <value>0.8</value>
+    <description>
+      Memory utilization threshold (0.0 to 1.0) above which requests are throttled.
+    </description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.throttle.cpu.threshold</name>
+    <value>0.8</value>
+    <description>
+      CPU utilization threshold (0.0 to 1.0) above which requests are throttled.
+    </description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.throttle.io.threshold</name>
+    <value>0.8</value>
+    <description>
+      I/O utilization threshold (0.0 to 1.0) above which requests are throttled.
+    </description>
+  </property>
+  
+  <!-- Configuration Management -->
+  
+  <property>
+    <name>hbase.resource.config.storage.type</name>
+    <value>memory</value>
+    <description>
+      Storage type for resource configuration. 
+      Supported values: memory, zookeeper, file
+    </description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.config.refresh.interval.ms</name>
+    <value>30000</value>
+    <description>
+      Interval in milliseconds at which configuration is refreshed from storage.
+    </description>
+  </property>
+  
+  <!-- Metrics Configuration -->
+  
+  <property>
+    <name>hbase.resource.metrics.enabled</name>
+    <value>true</value>
+    <description>
+      Enable collection of resource management metrics.
+    </description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.metrics.history.size</name>
+    <value>1000</value>
+    <description>
+      Number of historical metric values to retain for histogram calculations.
+    </description>
+  </property>
+  
+  <!-- Web Interface Configuration -->
+  
+  <property>
+    <name>hbase.resource.manager.web.ui.enabled</name>
+    <value>true</value>
+    <description>
+      Enable the web-based resource management dashboard.
+    </description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.manager.http.address</name>
+    <value>0.0.0.0</value>
+    <description>
+      Address for the resource manager web interface.
+    </description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.manager.http.port</name>
+    <value>16030</value>
+    <description>
+      Port for the resource manager web interface.
+    </description>
+  </property>
+  
+  <!-- Resource Pool Configuration Examples -->
+  
+  <property>
+    <name>hbase.resource.pool.root.memory.max.mb</name>
+    <value>16384</value>
+    <description>
+      Maximum memory allocation for the root resource pool in MB.
+    </description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.pool.root.cpu.max.cores</name>
+    <value>16</value>
+    <description>
+      Maximum CPU cores allocation for the root resource pool.
+    </description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.pool.root.io.max.weight</name>
+    <value>10000</value>
+    <description>
+      Maximum I/O weight allocation for the root resource pool.
+    </description>
+  </property>
+  
+</configuration>

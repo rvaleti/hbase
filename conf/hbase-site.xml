@@ -51,4 +51,91 @@
     <name>hbase.unsafe.stream.capability.enforce</name>
     <value>false</value>
   </property>
+
+  <!-- Hierarchical Resource Management Configuration -->
+  
+  <!-- Enable hierarchical resource management -->
+  <property>
+    <name>hbase.resource.hierarchical.enabled</name>
+    <value>true</value>
+    <description>Enable hierarchical resource management for HBase operations</description>
+  </property>
+  
+  <!-- Use enhanced RegionServer with resource management -->
+  <property>
+    <name>hbase.regionserver.impl</name>
+    <value>org.apache.hadoop.hbase.regionserver.HRegionServerWithResourceManagement</value>
+    <description>Use the enhanced RegionServer with hierarchical resource management</description>
+  </property>
+  
+  <!-- Resource Manager Configuration -->
+  <property>
+    <name>hbase.resource.scheduler.policy</name>
+    <value>FAIR_SHARE</value>
+    <description>Scheduling policy: FAIR_SHARE, FIFO, or DRF</description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.scheduler.preemption.enabled</name>
+    <value>true</value>
+    <description>Enable resource preemption</description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.scheduler.total.memory.mb</name>
+    <value>2048</value>
+    <description>Total memory available for resource scheduling (MB)</description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.scheduler.total.cpu.cores</name>
+    <value>4</value>
+    <description>Total CPU cores available for resource scheduling</description>
+  </property>
+  
+  <!-- Throttling Configuration -->
+  <property>
+    <name>hbase.resource.throttle.global.rate.limit</name>
+    <value>1000</value>
+    <description>Global rate limit (requests per second)</description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.throttle.user.rate.limit</name>
+    <value>100</value>
+    <description>Per-user rate limit (requests per second)</description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.throttle.memory.threshold</name>
+    <value>0.8</value>
+    <description>Memory utilization threshold for throttling</description>
+  </property>
+  
+  <!-- Web UI Configuration -->
+  <property>
+    <name>hbase.resource.web.ui.enabled</name>
+    <value>true</value>
+    <description>Enable resource management web UI</description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.web.ui.port</name>
+    <value>16030</value>
+    <description>Port for resource management web UI</description>
+  </property>
+  
+  <!-- Metrics Configuration -->
+  <property>
+    <name>hbase.resource.metrics.enabled</name>
+    <value>true</value>
+    <description>Enable resource management metrics collection</description>
+  </property>
+  
+  <property>
+    <name>hbase.resource.metrics.collection.interval.ms</name>
+    <value>5000</value>
+    <description>Metrics collection interval in milliseconds</description>
+  </property>
+  
 </configuration>
